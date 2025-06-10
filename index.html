@@ -3,747 +3,661 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧠 THE ULTIMATE PASSWORD GAUNTLET</title>
+    <title>The Password Game</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            background-color: #f5f3f0;
+            margin: 0;
             padding: 20px;
-            color: #333;
+            line-height: 1.4;
         }
-
+        
         .container {
-            max-width: 900px;
+            max-width: 700px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background: #f5f3f0;
         }
-
+        
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
-
-        .header h1 {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 2.5em;
+        
+        .site-name {
+            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 10px;
+            color: #333;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
         }
-
-        .saura-status {
-            background: linear-gradient(45deg, #ff9a9e, #fecfef);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.2em;
-            border: 3px solid #ff6b6b;
+        
+        .game-title {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 40px;
         }
-
-        .password-container {
+        
+        .game-title::before {
+            content: "✱ ";
+            color: #333;
+        }
+        
+        .input-section {
             margin-bottom: 30px;
         }
-
+        
+        .input-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .rule-counter {
+            background: #333;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
         .password-input {
             width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            border: 3px solid #ddd;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            font-family: 'Courier New', monospace;
-            min-height: 60px;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            background: white;
+            box-sizing: border-box;
+            min-height: 50px;
             resize: vertical;
         }
-
+        
         .password-input:focus {
             outline: none;
-            border-color: #4ecdc4;
-            box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+            border-color: #007bff;
         }
-
-        .rules-container {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
+        
+        .rules-list {
+            margin-top: 20px;
         }
-
+        
         .rule {
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 6px;
             transition: all 0.3s ease;
-            border-left: 4px solid #ddd;
         }
-
-        .rule.active {
-            background: linear-gradient(45deg, #ffecd2, #fcb69f);
-            border-left-color: #ff8a80;
-            transform: translateX(5px);
+        
+        .rule.valid {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
         }
-
-        .rule.passed {
-            background: linear-gradient(45deg, #c3f0ca, #c3f0ca);
-            border-left-color: #4caf50;
-            opacity: 0.7;
+        
+        .rule.invalid {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
         }
-
-        .rule.failed {
-            background: linear-gradient(45deg, #ffcdd2, #ffcdd2);
-            border-left-color: #f44336;
-            animation: shake 0.5s ease-in-out;
+        
+        .rule.pending {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
         }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+        
+        .rule-icon {
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            flex-shrink: 0;
         }
-
-        .rule-number {
-            font-weight: bold;
-            color: #666;
-            margin-right: 10px;
+        
+        .rule-text {
+            flex: 1;
+            font-size: 14px;
+            color: #333;
         }
-
+        
         .progress-bar {
             width: 100%;
-            height: 20px;
-            background: #eee;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin: 20px 0;
             overflow: hidden;
         }
-
+        
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #0abde3);
             width: 0%;
-            transition: width 0.5s ease;
+            transition: width 0.3s ease;
+            border-radius: 4px;
         }
-
+        
         .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: linear-gradient(45deg, #a8edea, #fed6e3);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .burning-char {
-            background: linear-gradient(45deg, #ff4757, #ff6348);
-            color: white;
-            padding: 2px 4px;
-            border-radius: 3px;
-            animation: burn 1s infinite alternate;
-        }
-
-        @keyframes burn {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
-        }
-
-        .timer {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #ff4757;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .final-challenge {
-            background: linear-gradient(45deg, #ff9a9e, #fecfef);
-            border: 3px solid #ff6b6b;
-            border-radius: 15px;
-            padding: 20px;
+            display: flex;
+            justify-content: space-between;
             margin: 20px 0;
-            text-align: center;
+            font-size: 14px;
+            color: #666;
         }
-
-        .city-image {
-            max-width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-
-        .hidden {
+        
+        .chicken-container {
+            margin: 10px 0;
+            padding: 10px;
+            background: #fff;
+            border-radius: 6px;
+            border: 2px solid #ddd;
             display: none;
         }
-
-        .emoji-large {
-            font-size: 2em;
-            animation: bounce 1s infinite;
+        
+        .chicken-info {
+            font-size: 14px;
+            color: #333;
         }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        
+        .chicken-emoji {
+            font-size: 24px;
+            margin-right: 10px;
         }
-
-        .category-header {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+        
+        .fire-indicator {
+            margin: 10px 0;
+            padding: 10px;
+            background: #ff4757;
             color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin: 20px 0 10px 0;
-            font-weight: bold;
+            border-radius: 6px;
+            display: none;
             text-align: center;
+            font-weight: bold;
+        }
+        
+        .moon-phase {
+            margin: 10px 0;
+            padding: 10px;
+            background: #2c3e50;
+            color: white;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🧠 THE ULTIMATE PASSWORD GAUNTLET</h1>
-            <p>Bản Siêu Cấp - 64 Quy Luật Thử Thách</p>
+            <div class="site-name">NEAL.FUN</div>
+            <h1 class="game-title">The Password Game</h1>
         </div>
-
-        <div class="saura-status" id="sauraStatus">
-            <span class="emoji-large">🥚</span>
-            <div>Saura đang chờ được tạo ra... (Gõ emoji 🥚 trong mật khẩu)</div>
+        
+        <div class="input-section">
+            <div class="input-label">
+                <span>Please choose a password</span>
+                <div class="rule-counter" id="ruleCounter">0</div>
+            </div>
+            <textarea class="password-input" id="passwordInput" placeholder="Enter your password here..."></textarea>
         </div>
-
-        <div class="timer" id="timer">Thời gian: 00:00</div>
-
+        
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
-
+        
         <div class="stats">
-            <div class="stat-card">
-                <div>Quy luật hiện tại</div>
-                <div id="currentRule">1</div>
-            </div>
-            <div class="stat-card">
-                <div>Quy luật đã vượt qua</div>
-                <div id="passedRules">0</div>
-            </div>
-            <div class="stat-card">
-                <div>Điểm Saura</div>
-                <div id="sauraScore">0</div>
-            </div>
-            <div class="stat-card">
-                <div>Độ dài mật khẩu</div>
-                <div id="passwordLength">0</div>
+            <span>Rules Passed: <span id="passedCount">0</span>/64</span>
+            <span>Password Length: <span id="lengthCount">0</span></span>
+        </div>
+        
+        <div class="chicken-container" id="chickenContainer">
+            <div class="chicken-info">
+                <span class="chicken-emoji">🐔</span>
+                <span>Paul the Chicken needs feeding every 30 seconds!</span>
+                <div>Health: <span id="chickenHealth">100</span>%</div>
             </div>
         </div>
-
-        <div class="password-container">
-            <textarea 
-                id="passwordInput" 
-                class="password-input" 
-                placeholder="Bắt đầu nhập mật khẩu của bạn..."
-                spellcheck="false"
-            ></textarea>
+        
+        <div class="fire-indicator" id="fireIndicator">
+            🔥 Your password is on fire! Put it out with water! 🔥
         </div>
-
-        <div class="rules-container" id="rulesContainer">
-            <!-- Rules sẽ được tạo động bằng JavaScript -->
+        
+        <div class="moon-phase" id="moonPhase">
+            Current Moon Phase: <span id="moonPhaseText">🌕 Full Moon</span>
         </div>
-
-        <div class="final-challenge hidden" id="finalChallenge">
-            <h3>🏆 THỬ THÁCH CUỐI CÙNG</h3>
-            <p>Đoán thành phố trong hình ảnh này:</p>
-            <img class="city-image" id="cityImage" src="" alt="Thành phố bí ẩn">
-            <input type="text" id="cityGuess" placeholder="Nhập tên thành phố...">
-            <button onclick="checkCityGuess()">Xác nhận</button>
-        </div>
+        
+        <div class="rules-list" id="rulesList"></div>
     </div>
 
     <script>
-        class UltimatePasswordGame {
+        class PasswordGame {
             constructor() {
-                this.currentRule = 1;
-                this.passedRules = 0;
                 this.password = '';
-                this.gameStartTime = Date.now();
-                this.saura = {
-                    state: 'egg', // egg, baby, adult
-                    happiness: 100,
-                    lastFed: Date.now(),
-                    cryCount: 0,
-                    sleeping: false
+                this.rules = this.initializeRules();
+                this.passedRules = new Set();
+                this.chickenHealth = 100;
+                this.chickenTimer = null;
+                this.fireActive = false;
+                this.currentMoonPhase = this.getMoonPhase();
+                this.gameData = {
+                    currentTime: new Date(),
+                    randomNumber: Math.floor(Math.random() * 1000),
+                    chessPuzzle: 'Nf7',
+                    atomicNumber: 6,
+                    romanYear: 'MMXXV',
+                    wordle: '',
+                    geoCode: '',
+                    latitude: 0,
+                    longitude: 0
                 };
-                this.burnSystem = {
-                    active: false,
-                    burningChars: new Set(),
-                    lastBurn: Date.now()
-                };
-                this.timer = null;
-                this.rules = this.generateRules();
-                this.cities = [
-                    {name: 'Paris', image: 'https://via.placeholder.com/400x300/FF6B6B/FFFFFF?text=Eiffel+Tower'},
-                    {name: 'Tokyo', image: 'https://via.placeholder.com/400x300/4ECDC4/FFFFFF?text=Tokyo+Tower'},
-                    {name: 'New York', image: 'https://via.placeholder.com/400x300/45B7D1/FFFFFF?text=NYC+Skyline'},
-                    {name: 'London', image: 'https://via.placeholder.com/400x300/96CEB4/FFFFFF?text=Big+Ben'},
-                    {name: 'Sydney', image: 'https://via.placeholder.com/400x300/FFEAA7/FFFFFF?text=Opera+House'}
-                ];
                 
-                this.init();
+                this.initializeGame();
+                this.loadExternalData();
             }
-
-            generateRules() {
+            
+            initializeRules() {
                 return [
-                    // CƠ BẢN (1-10)
-                    {id: 1, text: "Mật khẩu phải dài ít nhất 8 ký tự", category: "CƠ BẢN", check: (pwd) => pwd.length >= 8},
-                    {id: 2, text: "Phải có chữ hoa và chữ thường", category: "CƠ BẢN", check: (pwd) => /[a-z]/.test(pwd) && /[A-Z]/.test(pwd)},
-                    {id: 3, text: "Phải có ít nhất một chữ số", category: "CƠ BẢN", check: (pwd) => /\d/.test(pwd)},
-                    {id: 4, text: "Phải có một ký tự đặc biệt (!@#$...)", category: "CƠ BẢN", check: (pwd) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd)},
-                    {id: 5, text: "Không được chứa từ 'password'", category: "CƠ BẢN", check: (pwd) => !pwd.toLowerCase().includes('password')},
-                    {id: 6, text: "Phải có tên một loài động vật", category: "CƠ BẢN", check: (pwd) => /cat|dog|lion|tiger|elephant|bird|fish|bear|wolf|fox/i.test(pwd)},
-                    {id: 7, text: "Tổng các chữ số phải là số chẵn", category: "CƠ BẢN", check: (pwd) => {
-                        const digits = pwd.match(/\d/g);
-                        if (!digits) return false;
-                        const sum = digits.reduce((acc, digit) => acc + parseInt(digit), 0);
-                        return sum % 2 === 0;
+                    { id: 1, text: "Your password must be at least 5 characters.", check: (p) => p.length >= 5 },
+                    { id: 2, text: "Your password must include a number.", check: (p) => /\d/.test(p) },
+                    { id: 3, text: "Your password must include an uppercase letter.", check: (p) => /[A-Z]/.test(p) },
+                    { id: 4, text: "Your password must include a special character.", check: (p) => /[!@#$%^&*(),.?\":{}|<>]/.test(p) },
+                    { id: 5, text: "The digits in your password must add up to 25.", check: (p) => {
+                        const digits = p.match(/\d/g);
+                        return digits ? digits.reduce((sum, d) => sum + parseInt(d), 0) === 25 : false;
                     }},
-                    {id: 8, text: "Không được có hai ký tự trùng nhau liên tiếp", category: "CƠ BẢN", check: (pwd) => !/(.)\1/.test(pwd)},
-                    {id: 9, text: "Phải chứa một nguyên âm kép (ae, ou, io...)", category: "CƠ BẢN", check: (pwd) => /ae|ou|io|ea|ai|ei|oo|ee|aa|ii|uu/i.test(pwd)},
-                    {id: 10, text: "Phải chứa một từ tiếng Anh viết ngược", category: "CƠ BẢN", check: (pwd) => /level|civic|radar|madam|refer|stats|noon|deed|racecar/i.test(pwd)},
-
-                    // NGỮ NGHĨA & LOGIC (11-20)
-                    {id: 11, text: "Phải chứa một tên màu cơ bản (red, blue...)", category: "NGỮ NGHĨA & LOGIC", check: (pwd) => /red|blue|green|yellow|orange|purple|pink|black|white|brown/i.test(pwd)},
-                    {id: 12, text: "Phải có một từ đồng âm tiếng Anh (write/right)", category: "NGỮ NGHĨA & LOGIC", check: (pwd) => /write|right|there|their|to|too|two|four|for|eight|ate/i.test(pwd)},
-                    {id: 13, text: "Không được chứa hai nguyên âm đứng cạnh nhau", category: "NGỮ NGHĨA & LOGIC", check: (pwd) => !/[aeiou]{2}/i.test(pwd)},
-                    {id: 14, text: "Phải có một từ vựng GRE cấp độ C2", category: "NGỮ NGHĨA & LOGIC", check: (pwd) => /ubiquitous|perspicacious|surreptitious|grandiloquent|obfuscate/i.test(pwd)},
-                    {id: 15, text: "Phải có tên một môn học", category: "NGỮ NGHĨA & LOGIC", check: (pwd) => /math|science|history|english|biology|chemistry|physics|art|music/i.test(pwd)},
-                    {id: 16, text: "Không được bắt đầu hoặc kết thúc bằng chữ số", category: "NGỮ NGHĨA & LOGIC", check: (pwd) => !/^\d/.test(pwd) && !/\d$/.test(pwd)},
-                    {id: 17, text: "Phải có một từ palindrome (level, civic, radar...)", category: "NGỮ NGHĨA & LOGIC", check: (pwd) => /level|civic|radar|madam|refer|stats|noon|deed|racecar/i.test(pwd)},
-                    {id: 18, text: "Phải có từ 3 ngôn ngữ khác nhau", category: "NGỮ NGHĨA & LOGIC", check: (pwd) => {
-                        const english = /hello|world|good|bad/i.test(pwd);
-                        const spanish = /hola|mundo|bueno|malo/i.test(pwd);
-                        const french = /bonjour|monde|bon|mauvais/i.test(pwd);
-                        return [english, spanish, french].filter(Boolean).length >= 3;
+                    { id: 6, text: "Your password must include a month of the year.", check: (p) => {
+                        const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+                        return months.some(month => p.toLowerCase().includes(month));
                     }},
-                    {id: 19, text: "Phải có một cụm ẩn dụ phổ biến", category: "NGỮ NGHĨA & LOGIC", check: (pwd) => /break.*ice|cold.*feet|piece.*cake|raining.*cats.*dogs/i.test(pwd)},
-                    {id: 20, text: "Mật khẩu phải tạo thành một câu có nghĩa đầy đủ", category: "NGỮ NGHĨA & LOGIC", check: (pwd) => pwd.split(' ').length >= 4 && /[.!?]$/.test(pwd)},
-
-                    // THỜI GIAN & NGỮ CẢNH (21-30)
-                    {id: 21, text: "Phải chứa giờ hiện tại (HH:MM)", category: "THỜI GIAN & NGỮ CẢNH", check: (pwd) => {
+                    { id: 7, text: "Your password must include a roman numeral.", check: (p) => /[IVXLCDM]/.test(p.toUpperCase()) },
+                    { id: 8, text: "Your password must include one of our sponsors: Pepsi, Starbucks, Shell.", check: (p) => {
+                        const sponsors = ['pepsi', 'starbucks', 'shell'];
+                        return sponsors.some(sponsor => p.toLowerCase().includes(sponsor));
+                    }},
+                    { id: 9, text: "The roman numerals in your password should multiply to 35.", check: (p) => {
+                        const romanNumerals = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000};
+                        const romans = p.toUpperCase().match(/[IVXLCDM]/g);
+                        if (!romans) return false;
+                        const product = romans.reduce((prod, r) => prod * romanNumerals[r], 1);
+                        return product === 35;
+                    }},
+                    { id: 10, text: "Your password must include this CAPTCHA: 🔥", check: (p) => p.includes('🔥') },
+                    { id: 11, text: "Your password must include today's Wordle answer.", check: (p) => {
+                        return this.gameData.wordle && p.toLowerCase().includes(this.gameData.wordle.toLowerCase());
+                    }},
+                    { id: 12, text: "Your password must include a two-letter country code.", check: (p) => {
+                        const countryCodes = ['US', 'GB', 'FR', 'DE', 'JP', 'CN', 'CA', 'AU', 'BR', 'IN', 'VN', 'KR', 'TH', 'SG'];
+                        return countryCodes.some(code => p.toUpperCase().includes(code));
+                    }},
+                    { id: 13, text: "Your password must include a leap year.", check: (p) => {
+                        const years = p.match(/\d{4}/g);
+                        if (!years) return false;
+                        return years.some(year => {
+                            const y = parseInt(year);
+                            return y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0);
+                        });
+                    }},
+                    { id: 14, text: "Your password must include the best move in algebraic chess notation.", check: (p) => {
+                        return p.includes(this.gameData.chessPuzzle);
+                    }},
+                    { id: 15, text: "🥚 ← This is my chicken Paul. He hasn't hatched yet, please put him in your password.", check: (p) => p.includes('🥚') },
+                    { id: 16, text: "Your password must include the atomic number of carbon.", check: (p) => p.includes('6') },
+                    { id: 17, text: "Your password must include the current year in roman numerals.", check: (p) => {
+                        return p.toUpperCase().includes(this.gameData.romanYear);
+                    }},
+                    { id: 18, text: "Your password must include a color.", check: (p) => {
+                        const colors = ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'black', 'white', 'brown', 'gray', 'violet'];
+                        return colors.some(color => p.toLowerCase().includes(color));
+                    }},
+                    { id: 19, text: "Paul has hatched! 🐔 Please don't forget to feed him. He eats three 🐛🐛🐛.", check: (p) => {
+                        const wormCount = (p.match(/🐛/g) || []).length;
+                        return wormCount >= 3 && p.includes('🐔');
+                    }},
+                    { id: 20, text: "Your password must include the length of your password.", check: (p) => p.includes(p.length.toString()) },
+                    { id: 21, text: "Your password must include a YouTube URL.", check: (p) => /https?:\/\/(www\.)?(youtube\.com|youtu\.be)/.test(p) },
+                    { id: 22, text: "Your password must include a prime number.", check: (p) => {
+                        const isPrime = (n) => {
+                            if (n < 2) return false;
+                            for (let i = 2; i <= Math.sqrt(n); i++) {
+                                if (n % i === 0) return false;
+                            }
+                            return true;
+                        };
+                        const numbers = p.match(/\d+/g);
+                        return numbers && numbers.some(num => isPrime(parseInt(num)));
+                    }},
+                    { id: 23, text: "Your password must include the current time (HH:MM format).", check: (p) => {
                         const now = new Date();
                         const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-                        return pwd.includes(timeStr);
+                        return p.includes(timeStr);
                     }},
-                    {id: 22, text: "Phải chứa ngày sinh của bạn (DD/MM/YYYY)", category: "THỜI GIAN & NGỮ CẢNH", check: (pwd) => /\d{2}\/\d{2}\/\d{4}/.test(pwd)},
-                    {id: 23, text: "Phải chứa múi giờ hiện tại (UTC+7)", category: "THỜI GIAN & NGỮ CẢNH", check: (pwd) => /UTC\+7|GMT\+7/i.test(pwd)},
-                    {id: 24, text: "Phải có một múi giờ khác lệch ≥ 5 tiếng", category: "THỜI GIAN & NGỮ CẢNH", check: (pwd) => /UTC-5|UTC\+12|GMT-5|GMT\+12/i.test(pwd)},
-                    {id: 25, text: "Phải có tên một thành phố đang có mưa", category: "THỜI GIAN & NGỮ CẢNH", check: (pwd) => /london|seattle|mumbai|singapore/i.test(pwd)},
-                    {id: 26, text: "Phải có nhiệt độ trung bình hôm nay (°C)", category: "THỜI GIAN & NGỮ CẢNH", check: (pwd) => /\d{1,2}°C/.test(pwd)},
-                    {id: 27, text: "Phải chứa một URL thật có thể click", category: "THỜI GIAN & NGỮ CẢNH", check: (pwd) => /https?:\/\/[^\s]+/.test(pwd)},
-                    {id: 28, text: "Phải chứa tên một nhân vật lịch sử nổi tiếng", category: "THỜI GIAN & NGỮ CẢNH", check: (pwd) => /napoleon|einstein|lincoln|cleopatra|caesar/i.test(pwd)},
-                    {id: 29, text: "Phải có một địa danh ít người biết đến", category: "THỜI GIAN & NGỮ CẢNH", check: (pwd) => /bhutan|madagascar|mongolia|laos|fiji/i.test(pwd)},
-                    {id: 30, text: "Phải chứa một hashtag đang trending", category: "THỜI GIAN & NGỮ CẢNH", check: (pwd) => /#\w+/.test(pwd)},
-
-                    // SAURA & HÀNH VI (31-40)
-                    {id: 31, text: "Gõ emoji 🥚 để tạo Saura – trứng khủng long", category: "SAURA & HÀNH VI", check: (pwd) => pwd.includes('🥚')},
-                    {id: 32, text: "Cứ mỗi 60 giây, bạn phải 'cho ăn' Saura bằng emoji 🍎", category: "SAURA & HÀNH VI", check: (pwd) => this.checkSauraFeeding(pwd)},
-                    {id: 33, text: "Nếu bỏ quên 2 lần, Saura sẽ khóc 😢 và khoá 3 quy luật ngẫu nhiên", category: "SAURA & HÀNH VI", check: () => this.saura.cryCount < 2},
-                    {id: 34, text: "Sau 5 phút, Saura nở thành khủng long non 🦖", category: "SAURA & HÀNH VI", check: () => this.checkSauraEvolution()},
-                    {id: 35, text: "Mỗi 3 luật mới, Saura đòi 'ngủ' bằng emoji 🛏", category: "SAURA & HÀNH VI", check: (pwd) => this.passedRules % 3 !== 0 || pwd.includes('🛏')},
-                    {id: 36, text: "Nếu spam ký tự quá nhanh, Saura bị choáng 💫", category: "SAURA & HÀNH VI", check: () => true},
-                    {id: 37, text: "Nếu Saura khóc 3 lần → phải nhập lại toàn bộ mật khẩu", category: "SAURA & HÀNH VI", check: () => this.saura.cryCount < 3},
-                    {id: 38, text: "Cấm sử dụng emoji lửa 🔥 – Saura sợ cháy nổ!", category: "SAURA & HÀNH VI", check: (pwd) => !pwd.includes('🔥')},
-                    {id: 39, text: "Mỗi lỗi sai sẽ khiến Saura 'mất niềm tin 😠'", category: "SAURA & HÀNH VI", check: () => this.saura.happiness > 0},
-                    {id: 40, text: "Nếu giữ Saura hạnh phúc liên tục 10 luật → nhận phần thưởng 💎", category: "SAURA & HÀNH VI", check: () => this.saura.happiness >= 80},
-
-                    // LOGIC CAO CẤP (41-50)
-                    {id: 41, text: "Tất cả các chữ số phải là số nguyên tố (2,3,5,7)", category: "LOGIC CAO CẤP", check: (pwd) => {
-                        const digits = pwd.match(/\d/g);
-                        if (!digits) return false;
-                        return digits.every(d => ['2','3','5','7'].includes(d));
+                    { id: 24, text: "Your password must include a periodic table element.", check: (p) => {
+                        const elements = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca', 'Fe', 'Cu', 'Zn', 'Ag', 'Au'];
+                        return elements.some(element => p.includes(element));
                     }},
-                    {id: 42, text: "Mỗi từ phải bắt đầu bằng chữ cái kế tiếp trong bảng chữ cái", category: "LOGIC CAO CẤP", check: (pwd) => {
-                        const words = pwd.split(/\s+/).filter(w => /^[a-zA-Z]/.test(w));
-                        if (words.length < 2) return false;
-                        for (let i = 1; i < words.length; i++) {
-                            const prevChar = words[i-1][0].toLowerCase();
-                            const currChar = words[i][0].toLowerCase();
-                            if (currChar.charCodeAt(0) !== prevChar.charCodeAt(0) + 1) return false;
+                    { id: 25, text: "Your password is on fire 🔥! Quick, put it out with 💧💧💧.", check: (p) => {
+                        if (this.fireActive) {
+                            const waterCount = (p.match(/💧/g) || []).length;
+                            return waterCount >= 3;
                         }
                         return true;
                     }},
-                    {id: 43, text: "Phải có một phương trình đúng (vd: 3×3=9)", category: "LOGIC CAO CẤP", check: (pwd) => /\d+[×*]\d+=\d+/.test(pwd) && this.checkMathEquation(pwd)},
-                    {id: 44, text: "Tổng mã ASCII của toàn bộ mật khẩu phải là bội số của 100", category: "LOGIC CAO CẤP", check: (pwd) => {
-                        const sum = pwd.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-                        return sum % 100 === 0;
+                    { id: 26, text: "Your password must include a mathematical operator (+, -, *, /).", check: (p) => /[+\-*/]/.test(p) },
+                    { id: 27, text: "Your password must include the answer to 2 + 2.", check: (p) => p.includes('4') },
+                    { id: 28, text: "Your password must include a day of the week.", check: (p) => {
+                        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+                        return days.some(day => p.toLowerCase().includes(day));
                     }},
-                    {id: 45, text: "Phải có mã màu hex hợp lệ (#a1b2c3)", category: "LOGIC CAO CẤP", check: (pwd) => /#[0-9a-fA-F]{6}/.test(pwd)},
-                    {id: 46, text: "Phải chứa một ký tự Unicode ngoại ngữ", category: "LOGIC CAO CẤP", check: (pwd) => /[αβγδεζηθικλμνξοπρστυφχψω]|[ñáéíóúü]|[åæøðþ]/i.test(pwd)},
-                    {id: 47, text: "Không có hai ký tự cùng loại ở vị trí lẻ", category: "LOGIC CAO CẤP", check: (pwd) => this.checkOddPositions(pwd)},
-                    {id: 48, text: "Mỗi chữ cái chỉ được dùng tối đa 2 lần", category: "LOGIC CAO CẤP", check: (pwd) => {
-                        const letterCount = {};
-                        for (let char of pwd.toLowerCase()) {
-                            if (/[a-z]/.test(char)) {
-                                letterCount[char] = (letterCount[char] || 0) + 1;
-                                if (letterCount[char] > 2) return false;
-                            }
+                    { id: 29, text: "Your password must include the current moon phase emoji.", check: (p) => {
+                        const moonPhases = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
+                        return moonPhases.some(phase => p.includes(phase));
+                    }},
+                    { id: 30, text: "Your password must include a zodiac sign.", check: (p) => {
+                        const signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
+                        return signs.some(sign => p.toLowerCase().includes(sign));
+                    }},
+                    { id: 31, text: "Your password must include a programming language.", check: (p) => {
+                        const languages = ['javascript', 'python', 'java', 'c++', 'php', 'ruby', 'go', 'rust', 'kotlin', 'swift'];
+                        return languages.some(lang => p.toLowerCase().includes(lang));
+                    }},
+                    { id: 32, text: "Your password must include the square root of 144.", check: (p) => p.includes('12') },
+                    { id: 33, text: "Your password must include a keyboard key (F1-F12).", check: (p) => {
+                        for (let i = 1; i <= 12; i++) {
+                            if (p.toUpperCase().includes(`F${i}`)) return true;
                         }
-                        return true;
+                        return false;
                     }},
-                    {id: 49, text: "Phải có số La Mã nhân lại bằng 36 (vd: VI × VI)", category: "LOGIC CAO CẤP", check: (pwd) => /VI.*VI|XII.*III|XVIII.*II/i.test(pwd)},
-                    {id: 50, text: "Mật khẩu phải là giải pháp ẩn cho một bảng Sudoku 3×3", category: "LOGIC CAO CẤP", check: (pwd) => /[1-9]{9}/.test(pwd)},
-
-                    // ĐẶC BIỆT & TÁC GIẢ (51-64)
-                    {id: 51, text: "Tối thiểu 25% ký tự phải được viết in nghiêng", category: "ĐẶC BIỆT & TÁC GIẢ", check: (pwd) => true}, // Simplified
-                    {id: 52, text: "Không ký tự nào trong mật khẩu được lặp lại từ quy luật 1-10", category: "ĐẶC BIỆT & TÁC GIẢ", check: (pwd) => true}, // Simplified
-                    {id: 53, text: "Mật khẩu phải có độ dài đúng bằng số tuổi của bạn", category: "ĐẶC BIỆT & TÁC GIẢ", check: (pwd) => pwd.length >= 18 && pwd.length <= 99},
-                    {id: 54, text: "Phải có một emoji thể hiện tâm trạng của bạn", category: "ĐẶC BIỆT & TÁC GIẢ", check: (pwd) => /😄|😡|😢|😍|😴|🤔|😎|🥳/.test(pwd)},
-                    {id: 55, text: "Phải có tên một người bạn từng làm bạn thất vọng", category: "ĐẶC BIỆT & TÁC GIẢ", check: (pwd) => /john|jane|alex|sarah|mike|lisa|david|anna/i.test(pwd)},
-                    {id: 56, text: "Chèn ít nhất một ký tự đặc biệt không có trên bàn phím", category: "ĐẶC BIỆT & TÁC GIẢ", check: (pwd) => /[⸘ƛȡ∞≈≠±∆∑∏√∫Ω∂∇]/. test(pwd)},
-                    {id: 57, text: "Cứ mỗi 5 giây, một ký tự trong mật khẩu bốc cháy 🔥", category: "ĐẶC BIỆT & TÁC GIẢ", check: () => this.burnSystem.burningChars.size === 0},
-                    {id: 58, text: "Tổng số ký tự phải chia hết cho 7", category: "ĐẶC BIỆT & TÁC GIẢ", check: (pwd) => pwd.length % 7 === 0},
-                    {id: 59, text: "Mỗi 10 giây, trò chơi sẽ yêu cầu chèn một emoji ngẫu nhiên", category: "ĐẶC BIỆT & TÁC GIẢ", check: (pwd) => this.checkRandomEmoji(pwd)},
-                    {id: 60, text: "Phải liệt kê tên 3 sinh vật biển không ăn được", category: "ĐẶC BIỆT & TÁC GIẢ", check: (pwd) => {
-                        const creatures = ['jellyfish', 'pufferfish', 'starfish', 'seaurchin', 'manowar'];
-                        const found = creatures.filter(creature => pwd.toLowerCase().includes(creature));
-                        return found.length >= 3;
+                    { id: 34, text: "Your password must include a currency symbol (¥, €, £, $).", check: (p) => /[¥€£$]/.test(p) },
+                    { id: 35, text: "Your password must include the first letter of the English alphabet.", check: (p) => /[Aa]/.test(p) },
+                    { id: 36, text: "Your password must include an odd number.", check: (p) => {
+                        const numbers = p.match(/\d/g);
+                        return numbers && numbers.some(num => parseInt(num) % 2 === 1);
                     }},
-                    {id: 61, text: "Phải viết chuỗi mã Morse ngắn gồm ít nhất 3 ký tự", category: "ĐẶC BIỆT & TÁC GIẢ", check: (pwd) => /[.\-]{3,}/.test(pwd)},
-                    {id: 62, text: "Saura yêu cầu bạn chèn một lời động viên nó mỗi 5 luật", category: "ĐẶC BIỆT & TÁC GIẢ", check: (pwd) => {
-                        if (this.passedRules % 5 === 0 && this.passedRules > 0) {
-                            return /cố lên saura|you can do it/i.test(pwd);
-                        }
-                        return true;
+                    { id: 37, text: "Your password must include a perfect square.", check: (p) => {
+                        const numbers = p.match(/\d+/g);
+                        if (!numbers) return false;
+                        return numbers.some(num => {
+                            const n = parseInt(num);
+                            const sqrt = Math.sqrt(n);
+                            return sqrt === Math.floor(sqrt);
+                        });
                     }},
-                    {id: 63, text: "Mật khẩu PHẢI chứa tên tác giả: MinhSoora", category: "ĐẶC BIỆT & TÁC GIẢ", check: (pwd) => pwd.includes('MinhSoora')},
-                    {id: 64, text: "TRÒ CHƠI KẾT THÚC: Đoán thành phố từ hình ảnh và gõ lại toàn bộ mật khẩu trong 90 giây", category: "ĐẶC BIỆT & TÁC GIẢ", check: () => this.currentRule < 64}
+                    { id: 38, text: "Your password must include the latitude and longitude of your location.", check: (p) => {
+                        return p.includes(this.gameData.latitude.toString()) && p.includes(this.gameData.longitude.toString());
+                    }},
+                    { id: 39, text: "Your password must include a hexadecimal color code.", check: (p) => /#[0-9A-Fa-f]{6}/.test(p) },
+                    { id: 40, text: "Your password must include the word 'password'.", check: (p) => p.toLowerCase().includes('password') },
+                    { id: 41, text: "Your password must include a binary number (only 0s and 1s).", check: (p) => /[01]{2,}/.test(p) },
+                    { id: 42, text: "Your password must include the answer to life, universe and everything.", check: (p) => p.includes('42') },
+                    { id: 43, text: "Your password must include a musical note (C, D, E, F, G, A, B).", check: (p) => /[CDEFGAB]/.test(p.toUpperCase()) },
+                    { id: 44, text: "Your password must include a planet name.", check: (p) => {
+                        const planets = ['mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'];
+                        return planets.some(planet => p.toLowerCase().includes(planet));
+                    }},
+                    { id: 45, text: "Your password must include a Greek letter name.", check: (p) => {
+                        const greek = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega'];
+                        return greek.some(letter => p.toLowerCase().includes(letter));
+                    }},
+                    { id: 46, text: "Your password must include a chess piece name.", check: (p) => {
+                        const pieces = ['king', 'queen', 'rook', 'bishop', 'knight', 'pawn'];
+                        return pieces.some(piece => p.toLowerCase().includes(piece));
+                    }},
+                    { id: 47, text: "Your password must include the current year.", check: (p) => p.includes('2025') },
+                    { id: 48, text: "Your password must include an animal emoji.", check: (p) => /[🐶🐱🐭🐹🐰🦊🐻🐼🐨🐯🦁🐮🐷🐽🐸🐵🙈🙉🙊🐒🐔🐧🐦🐤🐣🐥🦆🦅🦉🦇🐺🐗🐴🦄🐝🐛🦋🐌🐞🐜🦟🦗🕷🕸🦂🐢🐍🦎🦖🦕🐙🦑🦐🦞🦀🐡🐠🐟🐬🐳🐋🦈🐊🐅🐆🦓🦍🦧🐘🦛🦏🐪🐫🦒🦘🐃🐂🐄🐎🐖🐏🐑🦙🐐🦌🐕🐩🦮🐕‍🦺🐈🐓🦃🦚🦜🦢🦩🕊🐇🦝🦨🦡🦦🦥🐁🐀🐿🦔]/.test(p) },
+                    { id: 49, text: "Your password must include a food emoji.", check: (p) => /[🍎🍏🍊🍋🍌🍉🍇🍓🫐🍈🍒🍑🥭🍍🥥🥝🍅🍆🥑🥦🥬🥒🌶🫑🌽🥕🫒🧄🧅🥔🍠🥐🥯🍞🥖🥨🧀🥚🍳🧈🥞🧇🥓🥩🍗🍖🦴🌭🍔🍟🍕🫓🥪🥙🧆🌮🌯🫔🥗🥘🫕🥫🍝🍜🍲🍛🍣🍱🥟🦪🍤🍙🍚🍘🍥🥠🥮🍢🍡🍧🍨🍦🥧🧁🍰🎂🍮🍭🍬🍫🍿🍩🍪🌰🥜🍯]/.test(p) },
+                    { id: 50, text: "Your password must include a vehicle emoji.", check: (p) => /[🚗🚕🚙🚌🚎🏎🚓🚑🚒🚐🛻🚚🚛🚜🏍🛵🚲🛴🛹🛼🚁🛸🚀✈️🛩🛫🛬🚢⛵🛥🚤⛴🚢🚂🚝🚄🚅🚆🚇🚈🚉🚊🚋🚞🚍🚎🚐🚑🚒🚓🚔🚕🚖🚗🚘🚙🚚🚛]/.test(p) },
+                    { id: 51, text: "Your password must include a weather emoji.", check: (p) => /[☀️🌤⛅🌥☁️🌦🌧⛈🌩🌨❄️☃️⛄🌬💨🌪🌈☂️☔⚡]/.test(p) },
+                    { id: 52, text: "Your password must include a hand gesture emoji.", check: (p) => /[👋🤚🖐✋🖖👌🤌🤏✌️🤞🤟🤘🤙👈👉👆🖕👇☝️👍👎👊✊🤛🤜👏🙌👐🤲🤝🙏]/.test(p) },
+                    { id: 53, text: "Your password must include the Fibonacci sequence start (1, 1, 2, 3, 5).", check: (p) => p.includes('11235') },
+                    { id: 54, text: "Your password must include pi to 3 decimal places.", check: (p) => p.includes('3.141') || p.includes('3.14') },
+                    { id: 55, text: "Your password must include a direction (North, South, East, West).", check: (p) => {
+                        const directions = ['north', 'south', 'east', 'west'];
+                        return directions.some(dir => p.toLowerCase().includes(dir));
+                    }},
+                    { id: 56, text: "Your password must include the atomic symbol for gold.", check: (p) => p.toUpperCase().includes('AU') },
+                    { id: 57, text: "Your password must include a keyboard shortcut (Ctrl+C, Alt+Tab, etc.).", check: (p) => {
+                        const shortcuts = ['ctrl+c', 'ctrl+v', 'ctrl+z', 'alt+tab', 'ctrl+s', 'ctrl+a'];
+                        return shortcuts.some(shortcut => p.toLowerCase().includes(shortcut));
+                    }},
+                    { id: 58, text: "Your password must include the speed of light (299792458).", check: (p) => p.includes('299792458') },
+                    { id: 59, text: "Your password must include a social media platform.", check: (p) => {
+                        const platforms = ['facebook', 'twitter', 'instagram', 'linkedin', 'youtube', 'tiktok', 'snapchat', 'reddit'];
+                        return platforms.some(platform => p.toLowerCase().includes(platform));
+                    }},
+                    { id: 60, text: "Your password must include the square of 13.", check: (p) => p.includes('169') },
+                    { id: 61, text: "Your password must include a film genre.", check: (p) => {
+                        const genres = ['action', 'comedy', 'drama', 'horror', 'romance', 'thriller', 'fantasy', 'scifi', 'animation'];
+                        return genres.some(genre => p.toLowerCase().includes(genre));
+                    }},
+                    { id: 62, text: "Your password must include the boiling point of water (100°C).", check: (p) => p.includes('100°C') || p.includes('100C') },
+                    { id: 63, text: "Your password must include a sport name.", check: (p) => {
+                        const sports = ['football', 'basketball', 'tennis', 'soccer', 'baseball', 'volleyball', 'swimming', 'running', 'golf', 'hockey'];
+                        return sports.some(sport => p.toLowerCase().includes(sport));
+                    }},
+                    { id: 64, text: "🎉 Congratulations! Your password must include this celebration emoji.", check: (p) => p.includes('🎉') }
                 ];
             }
-
-            init() {
+            
+            initializeGame() {
+                this.passwordInput = document.getElementById('passwordInput');
+                this.rulesList = document.getElementById('rulesList');
+                this.ruleCounter = document.getElementById('ruleCounter');
+                this.progressFill = document.getElementById('progressFill');
+                this.passedCount = document.getElementById('passedCount');
+                this.lengthCount = document.getElementById('lengthCount');
+                
+                this.passwordInput.addEventListener('input', (e) => {
+                    this.password = e.target.value;
+                    this.checkAllRules();
+                    this.updateDisplay();
+                });
+                
                 this.renderRules();
-                this.setupEventListeners();
-                this.startTimer();
-                this.startSauraSystem();
-                this.startBurnSystem();
+                this.startChickenTimer();
+                this.startFireTimer();
+                this.updateMoonPhase();
             }
-
-            renderRules() {
-                const container = document.getElementById('rulesContainer');
-                let currentCategory = '';
+            
+            async loadExternalData() {
+                // Simulate loading external data
+                try {
+                    // Simulate Wordle answer
+                    const wordleWords = ['ABOUT', 'HEART', 'WORLD', 'WOULD', 'GREAT', 'RIGHT', 'THINK', 'EVERY', 'MIGHT', 'SMALL'];
+                    this.gameData.wordle = wordleWords[Math.floor(Math.random() * wordleWords.length)];
+                    
+                    // Simulate geolocation
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition((position) => {
+                            this.gameData.latitude = Math.round(position.coords.latitude * 100) / 100;
+                            this.gameData.longitude = Math.round(position.coords.longitude * 100) / 100;
+                            this.checkAllRules();
+                        }, () => {
+                            // Default coordinates if geolocation fails
+                            this.gameData.latitude = 10.03;
+                            this.gameData.longitude = 105.78;
+                            this.checkAllRules();
+                        });
+                    }
+                } catch (error) {
+                    console.log('Error loading external data:', error);
+                }
+            }
+            
+            getMoonPhase() {
+                const phases = [
+                    { emoji: '🌑', name: 'New Moon' },
+                    { emoji: '🌒', name: 'Waxing Crescent' },
+                    { emoji: '🌓', name: 'First Quarter' },
+                    { emoji: '🌔', name: 'Waxing Gibbous' },
+                    { emoji: '🌕', name: 'Full Moon' },
+                    { emoji: '🌖', name: 'Waning Gibbous' },
+                    { emoji: '🌗', name: 'Last Quarter' },
+                    { emoji: '🌘', name: 'Waning Crescent' }
+                ];
+                
+                const now = new Date();
+                const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+                const phaseIndex = Math.floor((dayOfYear / 29.5) % 8);
+                
+                return phases[phaseIndex];
+            }
+            
+            updateMoonPhase() {
+                const moonPhaseElement = document.getElementById('moonPhaseText');
+                const phase = this.getMoonPhase();
+                moonPhaseElement.textContent = `${phase.emoji} ${phase.name}`;
+            }
+            
+            startChickenTimer() {
+                // Paul the chicken needs feeding every 30 seconds
+                this.chickenTimer = setInterval(() => {
+                    this.chickenHealth -= 10;
+                    if (this.chickenHealth <= 0) {
+                        this.chickenHealth = 0;
+                        document.getElementById('chickenContainer').style.display = 'block';
+                    }
+                    document.getElementById('chickenHealth').textContent = this.chickenHealth;
+                    this.checkAllRules();
+                }, 3000); // Every 3 seconds for demo purposes
+            }
+            
+            startFireTimer() {
+                // Randomly activate fire every 2-5 minutes
+                const fireInterval = Math.random() * 180000 + 120000; // 2-5 minutes
+                setTimeout(() => {
+                    this.fireActive = true;
+                    document.getElementById('fireIndicator').style.display = 'block';
+                    this.checkAllRules();
+                    
+                    // Fire goes out after 30 seconds if not extinguished
+                    setTimeout(() => {
+                        if (this.fireActive) {
+                            this.fireActive = false;
+                            document.getElementById('fireIndicator').style.display = 'none';
+                            this.checkAllRules();
+                        }
+                    }, 30000);
+                    
+                    this.startFireTimer(); // Schedule next fire
+                }, fireInterval);
+            }
+            
+            checkAllRules() {
+                this.passedRules.clear();
                 
                 this.rules.forEach(rule => {
-                    if (rule.category !== currentCategory) {
-                        currentCategory = rule.category;
-                        const categoryHeader = document.createElement('div');
-                        categoryHeader.className = 'category-header';
-                        categoryHeader.textContent = `🔹 ${currentCategory}`;
-                        container.appendChild(categoryHeader);
+                    if (rule.check(this.password)) {
+                        this.passedRules.add(rule.id);
                     }
-
-                    const ruleElement = document.createElement('div');
-                    ruleElement.className = 'rule';
-                    ruleElement.id = `rule-${rule.id}`;
-                    
-                    if (rule.id === this.currentRule) {
-                        ruleElement.classList.add('active');
-                    }
-                    
-                    ruleElement.innerHTML = `
-                        <span class="rule-number">${rule.id}.</span>
-                        ${rule.text}
-                    `;
-                    
-                    container.appendChild(ruleElement);
                 });
-            }
-
-            setupEventListeners() {
-                const passwordInput = document.getElementById('passwordInput');
-                let lastInputTime = Date.now();
-                let inputSpeed = 0;
-
-                passwordInput.addEventListener('input', (e) => {
-                    const currentTime = Date.now();
-                    inputSpeed = currentTime - lastInputTime;
-                    lastInputTime = currentTime;
-
-                    // Check spam detection
-                    if (inputSpeed < 50) { // Very fast typing
-                        this.saura.happiness -= 10;
-                        this.updateSauraStatus('Saura bị choáng 💫 vì bạn gõ quá nhanh!');
-                    }
-
-                    this.password = e.target.value;
-                    this.checkRules();
-                    this.resetBurningChars();
-                });
-            }
-
-            checkRules() {
-                const currentRuleObj = this.rules[this.currentRule - 1];
-                const ruleElement = document.getElementById(`rule-${this.currentRule}`);
-
-                if (currentRuleObj && currentRuleObj.check(this.password)) {
-                    ruleElement.classList.remove('active', 'failed');
-                    ruleElement.classList.add('passed');
-                    this.passedRules++;
-                    this.currentRule++;
-                    this.saura.happiness = Math.min(100, this.saura.happiness + 5);
-
-                    if (this.currentRule <= 64) {
-                        const nextRuleElement = document.getElementById(`rule-${this.currentRule}`);
-                        if (nextRuleElement) {
-                            nextRuleElement.classList.add('active');
-                        }
-                    }
-
-                    if (this.currentRule > 64) {
-                        this.startFinalChallenge();
-                    }
-                } else if (ruleElement && !ruleElement.classList.contains('active')) {
-                    // Rule failed
-                    ruleElement.classList.add('failed');
-                    this.saura.happiness = Math.max(0, this.saura.happiness - 5);
-                    
+                
+                // Special rule activations
+                if (this.passedRules.has(15) && !this.passedRules.has(19)) {
+                    // Chicken hatches after 10 seconds
                     setTimeout(() => {
-                        ruleElement.classList.remove('failed');
-                    }, 1000);
+                        document.getElementById('chickenContainer').style.display = 'block';
+                        this.checkAllRules();
+                    }, 10000);
                 }
-
-                this.updateStats();
-                this.updateProgress();
             }
-
-            checkSauraFeeding(pwd) {
-                const now = Date.now();
-                const timeSinceLastFed = now - this.saura.lastFed;
+            
+            renderRules() {
+                this.rulesList.innerHTML = '';
                 
-                if (timeSinceLastFed > 60000) { // 60 seconds
-                    if (pwd.includes('🍎')) {
-                        this.saura.lastFed = now;
-                        this.saura.happiness = Math.min(100, this.saura.happiness + 10);
-                        return true;
-                    } else {
-                        this.saura.cryCount++;
-                        this.saura.happiness = Math.max(0, this.saura.happiness - 20);
-                        this.updateSauraStatus('Saura đói và khóc 😢! Cho nó ăn 🍎!');
-                        return false;
+                let activeRules = 0;
+                
+                this.rules.forEach((rule, index) => {
+                    // Show rules progressively
+                    if (index === 0 || this.passedRules.has(this.rules[index - 1].id)) {
+                        activeRules++;
+                        
+                        const ruleElement = document.createElement('div');
+                        ruleElement.className = 'rule';
+                        
+                        const isPassed = this.passedRules.has(rule.id);
+                        const isActive = index === 0 || this.passedRules.has(this.rules[index - 1].id);
+                        
+                        if (isPassed) {
+                            ruleElement.classList.add('valid');
+                        } else if (isActive) {
+                            ruleElement.classList.add('invalid');
+                        } else {
+                            ruleElement.classList.add('pending');
+                        }
+                        
+                        const icon = isPassed ? '✓' : (isActive ? '✗' : '○');
+                        const iconColor = isPassed ? '#28a745' : (isActive ? '#dc3545' : '#ffc107');
+                        
+                        ruleElement.innerHTML = `
+                            <div class="rule-icon" style="color: ${iconColor}; font-weight: bold;">${icon}</div>
+                            <div class="rule-text">Rule ${rule.id}: ${rule.text}</div>
+                        `;
+                        
+                        this.rulesList.appendChild(ruleElement);
                     }
-                }
-                return true;
-            }
-
-            checkSauraEvolution() {
-                const gameTime = Date.now() - this.gameStartTime;
-                if (gameTime > 300000 && this.saura.state === 'egg') { // 5 minutes
-                    this.saura.state = 'adult';
-                    this.updateSauraStatus('Saura đã nở thành khủng long non 🦖!');
-                    return true;
-                } else if (gameTime > 150000 && this.saura.state === 'egg') { // 2.5 minutes
-                    this.saura.state = 'baby';
-                    this.updateSauraStatus('Saura đã nở thành khủng long con 🐣!');
-                }
-                return true;
-            }
-
-            checkMathEquation(pwd) {
-                const equations = pwd.match(/\d+[×*]\d+=\d+/g);
-                if (!equations) return false;
-                
-                return equations.some(eq => {
-                    const parts = eq.split(/[×*=]/);
-                    const a = parseInt(parts[0]);
-                    const b = parseInt(parts[1]);
-                    const result = parseInt(parts[2]);
-                    return a * b === result;
                 });
+                
+                return activeRules;
             }
-
-            checkOddPositions(pwd) {
-                const oddChars = [];
-                for (let i = 0; i < pwd.length; i += 2) {
-                    oddChars.push(pwd[i]);
+            
+            updateDisplay() {
+                const activeRules = this.renderRules();
+                const passedCount = this.passedRules.size;
+                
+                // Update counters
+                this.ruleCounter.textContent = activeRules;
+                this.passedCount.textContent = passedCount;
+                this.lengthCount.textContent = this.password.length;
+                
+                // Update progress bar
+                const progress = (passedCount / 64) * 100;
+                this.progressFill.style.width = `${progress}%`;
+                
+                // Auto-resize textarea
+                this.passwordInput.style.height = 'auto';
+                this.passwordInput.style.height = Math.max(50, this.passwordInput.scrollHeight) + 'px';
+                
+                // Check if fire should be extinguished
+                if (this.fireActive && this.passedRules.has(25)) {
+                    this.fireActive = false;
+                    document.getElementById('fireIndicator').style.display = 'none';
                 }
                 
-                const digitCount = oddChars.filter(c => /\d/.test(c)).length;
-                const letterCount = oddChars.filter(c => /[a-zA-Z]/.test(c)).length;
-                const specialCount = oddChars.filter(c => /[^a-zA-Z\d]/.test(c)).length;
-                
-                return digitCount <= 1 && letterCount <= 1 && specialCount <= 1;
-            }
-
-            checkRandomEmoji(pwd) {
-                // Simplified check - just ensure there are emojis
-                return /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]/u.test(pwd);
-            }
-
-            startTimer() {
-                const startTime = Date.now();
-                this.timer = setInterval(() => {
-                    const elapsed = Date.now() - startTime;
-                    const minutes = Math.floor(elapsed / 60000);
-                    const seconds = Math.floor((elapsed % 60000) / 1000);
-                    document.getElementById('timer').textContent = 
-                        `Thời gian: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                }, 1000);
-            }
-
-            startSauraSystem() {
-                setInterval(() => {
-                    // Saura happiness decay
-                    if (this.saura.happiness > 0) {
-                        this.saura.happiness = Math.max(0, this.saura.happiness - 1);
-                    }
-                    
-                    // Check if Saura needs feeding
-                    const timeSinceLastFed = Date.now() - this.saura.lastFed;
-                    if (timeSinceLastFed > 60000 && !this.password.includes('🍎')) {
-                        this.saura.cryCount++;
-                        this.updateSauraStatus('Saura đói quá! 😢 Cho nó ăn 🍎!');
-                    }
-                    
-                    this.checkSauraEvolution();
-                    this.updateSauraDisplay();
-                }, 5000);
-            }
-
-            startBurnSystem() {
-                setInterval(() => {
-                    if (this.currentRule >= 57 && this.password.length > 0) {
-                        const randomIndex = Math.floor(Math.random() * this.password.length);
-                        this.burnSystem.burningChars.add(randomIndex);
-                        this.highlightBurningChars();
-                    }
-                }, 5000);
-            }
-
-            highlightBurningChars() {
-                const input = document.getElementById('passwordInput');
-                let highlightedText = '';
-                
-                for (let i = 0; i < this.password.length; i++) {
-                    if (this.burnSystem.burningChars.has(i)) {
-                        highlightedText += `<span class="burning-char">${this.password[i]}</span>`;
-                    } else {
-                        highlightedText += this.password[i];
+                // Feed chicken
+                if (this.passedRules.has(19)) {
+                    this.chickenHealth = Math.min(100, this.chickenHealth + 5);
+                    document.getElementById('chickenHealth').textContent = this.chickenHealth;
+                    if (this.chickenHealth === 100) {
+                        document.getElementById('chickenContainer').style.display = 'none';
                     }
                 }
                 
-                // Note: This is a simplified version - in real implementation,
-                // you'd need more complex DOM manipulation for textarea highlighting
-            }
-
-            resetBurningChars() {
-                if (this.password.includes('💧')) {
-                    this.burnSystem.burningChars.clear();
-                }
-            }
-
-            updateSauraStatus(message) {
-                const status = document.getElementById('sauraStatus');
-                let emoji = '🥚';
-                
-                if (this.saura.state === 'baby') emoji = '🐣';
-                else if (this.saura.state === 'adult') emoji = '🦖';
-                
-                if (this.saura.happiness < 30) emoji += ' 😢';
-                else if (this.saura.happiness > 80) emoji += ' 😄';
-                
-                status.innerHTML = `
-                    <span class="emoji-large">${emoji}</span>
-                    <div>${message || this.getSauraMessage()}</div>
-                `;
-            }
-
-            getSauraMessage() {
-                if (this.saura.happiness < 20) return 'Saura rất buồn... 😢';
-                if (this.saura.happiness < 50) return 'Saura hơi lo lắng... 😟';
-                if (this.saura.happiness > 80) return 'Saura rất vui! 😄';
-                return 'Saura đang ổn! 😊';
-            }
-
-            updateSauraDisplay() {
-                this.updateSauraStatus();
-            }
-
-            updateStats() {
-                document.getElementById('currentRule').textContent = this.currentRule;
-                document.getElementById('passedRules').textContent = this.passedRules;
-                document.getElementById('sauraScore').textContent = this.saura.happiness;
-                document.getElementById('passwordLength').textContent = this.password.length;
-            }
-
-            updateProgress() {
-                const progress = (this.passedRules / 64) * 100;
-                document.getElementById('progressFill').style.width = `${progress}%`;
-            }
-
-            startFinalChallenge() {
-                const challenge = document.getElementById('finalChallenge');
-                const cityImage = document.getElementById('cityImage');
-                
-                const randomCity = this.cities[Math.floor(Math.random() * this.cities.length)];
-                this.finalCity = randomCity.name;
-                cityImage.src = randomCity.image;
-                
-                challenge.classList.remove('hidden');
-                
-                // Start 90-second countdown
-                let timeLeft = 90;
-                const countdown = setInterval(() => {
-                    document.getElementById('timer').textContent = `Thời gian còn lại: ${timeLeft}s`;
-                    timeLeft--;
-                    
-                    if (timeLeft < 0) {
-                        clearInterval(countdown);
-                        this.currentRule = 40; // Reset to rule 40
-                        challenge.classList.add('hidden');
-                        alert('Hết thời gian! Quay về quy luật 40!');
-                    }
-                }, 1000);
-            }
-
-            checkCityGuess() {
-                const guess = document.getElementById('cityGuess').value.toLowerCase();
-                const correct = this.finalCity.toLowerCase();
-                
-                if (guess === correct) {
-                    alert('🏆 CHÚC MỪNG! Bạn đã hoàn thành THE ULTIMATE PASSWORD GAUNTLET!');
-                    clearInterval(this.timer);
-                } else {
-                    alert('Sai rồi! Quay về quy luật 40!');
-                    this.currentRule = 40;
-                    document.getElementById('finalChallenge').classList.add('hidden');
+                // Victory condition
+                if (passedCount === 64) {
+                    setTimeout(() => {
+                        alert('🎉 Congratulations! You have completed The Ultimate Password Game! Your password is: ' + this.password);
+                    }, 500);
                 }
             }
         }
-
-        // Global function for final challenge
-        function checkCityGuess() {
-            if (window.game) {
-                window.game.checkCityGuess();
-            }
-        }
-
-        // Initialize game when page loads
+        
+        // Initialize the game when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            window.game = new UltimatePasswordGame();
+            new PasswordGame();
         });
     </script>
 </body>
-  </html>
+    </html>
